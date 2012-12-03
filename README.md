@@ -58,6 +58,7 @@ Chapter 1. Admin Guide
         5.3. cnxcc.kill_call
         
 1. Overview
+
    The cnxcc module was created to limit call duration in a multiple-calls/single-client scenario where
    a single client, identified by a unique value, is making several calls at the same time and consuming 
    its remaining seconds at a rate that is equal to the number of concurrent calls the client is having.
