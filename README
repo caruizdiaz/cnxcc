@@ -60,36 +60,39 @@ Chapter 1. Admin Guide
 1. Overview
 
    The cnxcc module was created to limit call duration in a multiple-calls/single-client 
-   scenario where a single client, identified by a unique value, is making several calls 
-   at the same time and consuming its remaining seconds at a rate that is equal to the 
-   number of concurrent calls that is having.
+   scenario where a single client, identified by a unique value, is making 
+   several calls at the same time and consuming its remaining seconds at 
+   a rate that is equal to the number of concurrent calls that is having.
    
-   Cnxcc can be used if your AAA software does not mantain the state of the calls 
-   it authorizes. For example, consider a call that successfully passed through the 
-   authorizer program to the "active" state and two minutes later another call arrived 
-   trying to be authorized: our accounting program runs every time a BYE is received
-   and since the first call is still online, the credit was not updated while the second
-   call arrived and it will be authorized using outdated credit information.
+   Cnxcc can be used if your AAA software does not mantain the state of 
+   the calls it authorizes. For example, consider a call that successfully 
+   passed through the authorizer program to the "active" state and two minutes 
+   later another call arrived trying to be authorized: our accounting program 
+   runs every time a BYE is received and since the first call is still online, 
+   the credit was not updated while the second call arrived and it will be 
+   authorized using outdated credit information.
 
-   If the first call was authorized with a maximum talk-time of 200 seconds, the module
-   will make sure it ends 200 seconds later. If a second call enters while the first call
-   is running its 100 seconds, the module is smart enough to know that the 100 seconds 
-   remaining has to be splitted in two. In consequence, it will make the first call 
-   to last 150 seconds (100 which was already consumed plus 50 more seconds), and the 
-   second call 50 seconds. 
+   If the first call was authorized with a maximum talk-time of 200 seconds, 
+   the module will make sure it ends 200 seconds later. If a second call enters 
+   while the first call is running its 100 seconds, the module is smart enough 
+   to know that the 100 seconds remaining has to be splitted in two. In consequence, 
+   it will make the first call to last 150 seconds (100 which was already consumed 
+   plus 50 more seconds), and the second call 50 seconds. 
 
-   In common cases, both calls will end before the credit is fully exhausted and in 
-   this case, no money is lost, but when the credit is about to end but still available, 
-   a call can easily consume more credit than it has and in that situation, cnxcc module
-   can help you to automatically shutdown all calls when the credit reaches zero.
+   In common cases, both calls will end before the credit is fully exhausted 
+   and in this case, no money is lost, but when the credit is about to end 
+   but still available, a call can easily consume more credit than it has 
+   and in that situation, cnxcc module can help you to automatically shutdown 
+   all calls when the credit reaches zero.
 
-   Every time a call is forced to end, a event route is called. With this route you can
-   easily inform to the accounting program what just happened so it can update the credit 
-   information in order to avoid new calls being authorized. You can also tear down the 
-   RTP proxy leg, log, or do whatever task that might be needed.
+   Every time a call is forced to end, a event route is called. With this 
+   route you can easily inform to the accounting program what just happened so 
+   it can update the credit information in order to avoid new calls being 
+   authorized. You can also tear down the RTP proxy leg, log, or do whatever
+   task that might be needed.
 
-   If the module is properly configured, all calls are maintained in memory so no disk
-   I/O operation is involved. This makes the module a lot faster.
+   If the module is properly configured, all calls are maintained in memory 
+   so no disk I/O operation is involved. This makes the module a lot faster.
 
    # INCOMPLETE, WORK IN PROGRESS #
    
