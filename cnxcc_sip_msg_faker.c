@@ -22,8 +22,8 @@
  *
  */
 
-#include <kamailio/parser/msg_parser.h>
-#include <kamailio/globals.h>
+#include "../../parser/msg_parser.h"
+#include "../../globals.h"
 
 #include <sys/socket.h>
 

@@ -21,6 +21,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#ifndef _CNXCC_MOD_H
+#define _CNXCC_MOD_H
 
 #include <kamailio/locking.h>
 #include <kamailio/str_hash.h>
@@ -42,12 +44,30 @@ typedef enum cnxpvtypes
 	CNX_PV_DROPPED
 } cnxpvtypes_t;
 
+typedef enum credit_type
+{
+	CREDIT_TIME,
+	CREDIT_MONEY
+} credit_type_t;
+
+typedef struct hash_tables
+{
+	struct str_hash_table *credit_data_by_client;
+	struct str_hash_table *call_data_by_cid;
+
+	gen_lock_t lock;
+} hash_tables_t;
+
 typedef struct data
 {
 	gen_lock_t lock;
 
-	struct str_hash_table *credit_data_by_client;
-	struct str_hash_table *call_data_by_cid;
+	hash_tables_t time;
+	hash_tables_t money;
+
+	/*struct str_hash_table *credit_data_by_client;
+	struct str_hash_table *call_data_by_cid;*/
+
 	stats_t *stats;
 
 	/*
@@ -69,6 +89,14 @@ typedef struct sip_data
 	str from_tag;
 } sip_data_t;
 
+typedef struct money_spec_data
+{
+	double cost_per_second;
+	int initial_pulse;
+	int final_pulse;
+
+} money_spec_data_t;
+
 struct call;
 typedef struct call
 {
@@ -78,11 +106,11 @@ typedef struct call
 	gen_lock_t lock;
 
 	char confirmed;
-	int max_secs;
-//	char call_ended;
+	double max_amount;
+	money_spec_data_t money_based;
 
 	unsigned int start_timestamp;
-	unsigned int consumed_secs;
+	double consumed_amount;
 
 	unsigned int dlg_h_entry;
 	unsigned int dlg_h_id;
@@ -103,12 +131,24 @@ typedef struct credit_data
 {
 	gen_lock_t lock;
 
-	int max_secs;
-	int consumed_secs;
-	int ended_calls_consumed_secs;
+	double max_amount;
+	double consumed_amount;
+	double ended_calls_consumed_amount;
 	int number_of_calls;
 	int concurrent_calls;
+
+//	money_spec_data_t money_based;
+	credit_type_t type;
+//	char money_bashed_flag;
 
 	call_t *call_list;
 
 } credit_data_t;
+
+
+int try_get_call_entry(str *callid, call_t **call, hash_tables_t **hts);
+int try_get_credit_data_entry(str *client_id, credit_data_t **credit_data);
+int terminate_call(call_t *call);
+void terminate_all_calls(credit_data_t *credit_data);
+
+#endif /* _CNXCC_MOD_H */

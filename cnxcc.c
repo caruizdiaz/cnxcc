@@ -22,6 +22,8 @@
  *
  */
 #include <time.h>
+#include <string.h>
+#include <stdlib.h>
 #include <sys/time.h>
 
 #include "cnxcc.h"
@@ -48,4 +50,14 @@ inline int timestamp2isodt(str *dest, unsigned int timestamp)
 	dest->len	= DATETIME_LENGTH;
 
 	return 0;
+}
+
+double str2double(str *string)
+{
+	char buffer[string->len + 1];
+
+	buffer[string->len]	= '\0';
+	memcpy(buffer, string->s, string->len);
+
+	return atof(buffer);
 }

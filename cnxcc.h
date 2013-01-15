@@ -34,5 +34,6 @@
 inline void get_datetime(str *dest);
 inline unsigned int get_current_timestamp();
 inline int timestamp2isodt(str *dest, unsigned int timestamp);
+double str2double(str *string);
 
 #endif /* _CNXCC_H */
