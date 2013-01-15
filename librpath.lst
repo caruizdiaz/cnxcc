@@ -1,0 +1,1 @@
+LIB_RPATH_LST:=/usr/src/kamailio-3.2.4/lib/kmi /usr/src/kamailio-3.2.4/lib/srdb1 /usr/src/kamailio-3.2.4/lib/kcore
