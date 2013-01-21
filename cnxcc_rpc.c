@@ -126,8 +126,6 @@ void rpc_check_client_stats(rpc_t* rpc, void* ctx)
 																 call->sip_data.callid.len, call->sip_data.callid.s,
 																 call->start_timestamp);
 
-//		LM_ALERT("--------> %s", row_buffer);
-
 		row_len 	= strlen(row_buffer);
 		rows.s		= pkg_realloc(rows.s, rows.len + row_len);
 
@@ -251,8 +249,6 @@ void rpc_active_clients(rpc_t* rpc, void* ctx)
 
 	rows.len = 0;
 
-//	LM_ALERT("yup");
-
 	iterate_over_table(&_data.time, &rows, CREDIT_TIME);
 	iterate_over_table(&_data.money, &rows, CREDIT_MONEY);
 
@@ -260,8 +256,6 @@ void rpc_active_clients(rpc_t* rpc, void* ctx)
 	{
 		LM_ERR("%s: error creating RPC struct\n", __FUNCTION__);
 	}
-
-//	LM_ALERT("---> %.*s", rows.len, rows.s);
 
 	if (rows.s != NULL)
 		pkg_free(rows.s);

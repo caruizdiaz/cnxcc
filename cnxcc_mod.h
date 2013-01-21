@@ -137,9 +137,7 @@ typedef struct credit_data
 	int number_of_calls;
 	int concurrent_calls;
 
-//	money_spec_data_t money_based;
 	credit_type_t type;
-//	char money_bashed_flag;
 
 	call_t *call_list;
 

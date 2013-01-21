@@ -50,8 +50,6 @@ void check_calls_by_money(unsigned int ticks, void *param)
 												call->money_based.cost_per_second *
 												( (consumed_time - call->money_based.initial_pulse) / call->money_based.final_pulse + 1 ) *
 												call->money_based.final_pulse;
-
-//						LM_ALERT("=======> %f -> total %f", call->consumed_amount, total_consumed_money);
 					}
 
 					total_consumed_money	+= call->consumed_amount;
@@ -102,8 +100,6 @@ void check_calls_by_time(unsigned int ticks, void *param)
 						  *tmp		= NULL;
 	call_t *tmp_call				= NULL;
 	int i;
-
-//	LM_DBG("Checking time based calls.");
 
 	lock_get(&_data.time.lock);
 
@@ -163,5 +159,4 @@ void check_calls_by_time(unsigned int ticks, void *param)
 			}
 
 	lock_release(&_data.time.lock);
-//	LM_DBG("Done checking time based calls.");
 }

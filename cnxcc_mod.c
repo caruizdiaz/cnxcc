@@ -70,14 +70,7 @@ MODULE_VERSION
 
 #define HT_SIZE						69
 #define MODULE_NAME					"CNXCC"
-/*#define CALLER_LEG 					0
-#define CALLEE_LEG 					1
-#define PCNXCC_HDR 					"P-cnxcc: "
-#define PCNXCC_HDR_LEN 				sizeof(PCNXCC_HDR) - 1
-#define PCNXCC_HDR_TXT				"call forced to end due to lack of credit"
-#define PCNXCC_HDR_TXT_LEN			sizeof(PCNXCC_HDR_TXT) - 1*/
 #define CREDIT_CHECK_TIME			1
-//#define FREE_CHECK_TIME				1
 
 #define TRUE						1
 #define FALSE						0
@@ -700,38 +693,6 @@ static void start_billing(str *callid, str tags[2])
 	 */
 	credit_data->concurrent_calls++;
 
-	/*
-	 * The maximum speak time is equal to the current "max_secs" minus
-	 * "consumed_seconds".
-	 * The value of "max_secs" is provided by the AAA subsystem which
-	 * does not maintain an in-memory/real-time status of the consumed seconds
-	 * of an authorized call. In case a new call is originated under the domain
-	 * of the same client-id, this is, the same client making two (or more)
-	 * simultaneous calls, we will receive an amount of "max_secs" that is not
-	 * accurate or updated since the previous calls may have not finished yet.
-	 *
-	 * For example:
-	 *
-	 * 1. Call 1; client-id=111; max_secs=10; discount-rate=1/sec
-	 *
-	 * 2. We discount 1 sec. of talk time every 1 second on the check_calls() function.
-	 *
-	 * 3. After 5 seconds of talk time, we receive a new call under the same client ID.
-	 *
-	 * 4. Since the first call hasn't finished yet, the call setup will go as follows
-	 *    Call 2; client-id=111; max_secs=10 (remember, 10 secs because the stop billing mark
-	 *                                        of the first call was not received by the authorizer)
-	 *    It should have been only 5 seconds in "max_secs", but 1st call is still on
-	 *    the go and the AAA hasn't refreshed its credit yet.
-	 *
-	 * 5. After applying the algorithm we will get:
-	 *    Calls: 1, 2; client-id=111; max_secs=5; discount-rate=2/sec.
-	 *    Caller #1 will speak 7 secs. Caller #2 will speak 3 secs.
-	 *
-	 * 6. The value of "concurrent_calls" will be incremented once the
-	 *    call is confirmed
-	 */
-
 	if (credit_data->max_amount == 0)
 		credit_data->max_amount	= call->max_amount; // first time setup
 
@@ -1236,8 +1197,6 @@ static int set_max_credit(struct sip_msg* msg,
 				initial_pulse_val,
 				final_pulse_val;
 
-
-//	pv_value_t max_secs_val, client_id_val;
 	double credit					= 0,
 		   cost_per_second			= 0;
 
@@ -1356,7 +1315,6 @@ static int set_max_time(struct sip_msg* msg, char* str_pv_client, char* str_pv_m
 {
 	credit_data_t *credit_data 	= NULL;
 	call_t *call				= NULL;
-	//str client_id;
 	pv_spec_t *max_secs_spec	= (pv_spec_t *) str_pv_maxsecs,
 			  *client_id_spec	= (pv_spec_t *) str_pv_client;
 	pv_value_t max_secs_val, client_id_val;
@@ -1396,7 +1354,6 @@ static int set_max_time(struct sip_msg* msg, char* str_pv_client, char* str_pv_m
 			LM_ERR("[%.*s]: can't get client_id PV value\n", msg->callid->body.len, msg->callid->body.s);
 			return -1;
 		}
-//		client_id	= client_id_val.rs;
 
 		if (client_id_val.rs.len == 0 || client_id_val.rs.s == NULL)
 		{
@@ -1425,8 +1382,6 @@ static int set_max_time(struct sip_msg* msg, char* str_pv_client, char* str_pv_m
 			LM_ERR("Unable to allocate new cid_by_client for client [%.*s]\n", client_id_val.rs.len, client_id_val.rs.s);
 			return -1;
 		}
-
-		//LM_ALERT("ready!");
 	}
 	else
 	{
@@ -1507,17 +1462,6 @@ static struct mi_root *mi_credit_control_stats(struct mi_root *tree, void *param
 	struct mi_root *rpl_tree;
 	struct mi_node *node, *node1;
 
-	/*node	= tree->node.kids;
-	if (node == NULL)
-		return init_mi_tree(500, MI_MISSING_PARM_S, MI_MISSING_PARM_LEN);
-
-	sp	= node->value;
-	if (sp.len <= 0 || sp.s == NULL)
-	{
-		LM_ERR("Invalid param\n");
-		return init_mi_tree(500, "Invalid param", sizeof("Invalid param") - 1);
-	}*/
-
 	rpl_tree	= init_mi_tree(200, "OK", 2);
 	node		= &rpl_tree->node;
 
@@ -1527,9 +1471,6 @@ static struct mi_root *mi_credit_control_stats(struct mi_root *tree, void *param
 		LM_ERR("Error creating child node\n");
 		goto error;
 	}
-
-/*	if (addf_mi_attr(node1, 0, MI_SSTR("hola"), "-> %s", "que tal") == 0)
-		goto error;*/
 
 	p	= int2str((unsigned long) _data.stats->active, &len);
 	if (p == NULL)
