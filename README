@@ -87,6 +87,7 @@ Chapter 1. Admin Guide
    This module has also a web interface which makes the visualization nicer. 
    Give it a try: https://github.com/caruizdiaz/cnxcc-web
 
+   *** I tested this module under Kamailio 3.2.4 ***
    
    ... documentation incomplete ...
    
