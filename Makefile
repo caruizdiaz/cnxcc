@@ -8,8 +8,6 @@
 include ../../Makefile.defs
 auto_gen=
 NAME=cnxcc.so
-#LIBS=../../modules/sl/sl.so
-LIBS=../../modules/sl/sl.so
 
 DEFS+=-DOPENSER_MOD_INTERFACE
 SERLIBPATH=../../lib
