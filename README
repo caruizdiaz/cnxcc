@@ -61,5 +61,12 @@ Chapter 1. Admin Guide
         
 1. Overview
 
+   To use the module, run kamailio with the supplied configuration file, register two
+   softphones that will call each other and watch the log files to see how the calls are
+   automatically shutdown when the credit is exhausted.
+
+   This module has also a web interface which makes the visualization nicer. 
+   Give it a try: https://github.com/caruizdiaz/cnxcc-web
+
    ... documentation incomplete ...
    
