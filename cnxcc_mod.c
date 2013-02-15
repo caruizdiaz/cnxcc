@@ -1203,8 +1203,6 @@ static int set_max_credit(struct sip_msg* msg,
 	unsigned int initial_pulse		= 0,
 			final_pulse				= 0;
 
-	set_ctrl_flag(msg);
-
 	if (msg->first_line.type == SIP_REQUEST && msg->first_line.u.request.method_value == METHOD_INVITE)
 	{
 		if (has_to_tag(msg))
@@ -1283,6 +1281,7 @@ static int set_max_credit(struct sip_msg* msg,
 													 credit,
 													 cost_per_second, initial_pulse,
 													 final_pulse, msg->callid->body.len, msg->callid->body.s);
+		set_ctrl_flag(msg);
 
 		if ((credit_data = get_or_create_credit_data_entry(&client_id_val.rs, CREDIT_MONEY)) == NULL)
 		{

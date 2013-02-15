@@ -12,6 +12,7 @@
 
 #include "cnxcc_mod.h"
 #include "cnxcc.h"
+#include "cnxcc_check.h"
 
 extern data_t _data;
 
@@ -31,6 +32,12 @@ void check_calls_by_money(unsigned int ticks, void *param)
 				credit_data_t *credit_data	= (credit_data_t *) h_entry->u.p;
 				call_t *call				= NULL;
 				double total_consumed_money	= 0;
+
+				if (i > SAFE_ITERATION_THRESHOLD)
+				{
+					LM_ERR("Too many iterations for this loop: %d", i);
+					break;
+				}
 
 				lock_get(&credit_data->lock);
 
@@ -87,7 +94,7 @@ void check_calls_by_money(unsigned int ticks, void *param)
 					lock_release(&credit_data->lock);
 					break;
 				}
-;
+
 				lock_release(&credit_data->lock);
 			}
 
@@ -112,6 +119,13 @@ void check_calls_by_time(unsigned int ticks, void *param)
 				int total_consumed_secs		= 0;
 
 				lock_get(&credit_data->lock);
+
+				if (i > SAFE_ITERATION_THRESHOLD)
+				{
+					LM_ERR("Too many iterations for this loop: %d", i);
+					break;
+				}
+
 				LM_DBG("Iterating through calls of client [%.*s]\n", credit_data->call_list->client_id.len, credit_data->call_list->client_id.s);
 
 				clist_foreach_safe(credit_data->call_list, call, tmp_call, next)

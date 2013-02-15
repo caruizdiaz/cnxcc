@@ -24,6 +24,7 @@
 #ifndef _CNXCC_MOD_H
 #define _CNXCC_MOD_H
 
+// 3,778
 #include <kamailio/locking.h>
 #include <kamailio/str_hash.h>
 #include <kamailio/parser/parse_rr.h>
