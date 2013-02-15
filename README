@@ -65,8 +65,29 @@ Chapter 1. Admin Guide
    softphones that will call each other and watch the log files to see how the calls are
    automatically shutdown when the credit is exhausted.
 
+   Example:
+
+   route[CNXCC]
+   {
+      $var(client)		= "test-client-0-123-01";
+      $var(credit) 		= "50";
+      $var(cost_per_sec) 	= "0.5";
+      $var(i_pulse)		= "30";
+      $var(f_pulse)		= "6";
+      
+      if (!cnxcc_set_max_credit("$var(client)",
+      			  "$var(credit)", 
+      			  "$var(cost_per_sec)", 
+      			  "$var(i_pulse)", 
+      			  "$var(f_pulse)")) {
+   	   xlog("Error setting up credit control");
+	   }
+   }
+
    This module has also a web interface which makes the visualization nicer. 
    Give it a try: https://github.com/caruizdiaz/cnxcc-web
 
+   *** I tested this module under Kamailio 3.2.4 ***
+   
    ... documentation incomplete ...
    
