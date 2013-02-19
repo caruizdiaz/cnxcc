@@ -70,7 +70,7 @@ MODULE_VERSION
 
 #define HT_SIZE						69
 #define MODULE_NAME					"CNXCC"
-#define CREDIT_CHECK_TIME			1
+//#define CREDIT_CHECK_TIME			5
 
 #define TRUE						1
 #define FALSE						0
@@ -145,7 +145,8 @@ static cmd_export_t cmds[] =
 
 static param_export_t params[] =
 {
-	{"dlg_flag",  		INT_PARAM,			&_data.ctrl_flag	},
+	{"dlg_flag",  				INT_PARAM,			&_data.ctrl_flag	},
+	{"credit_check_period",  	INT_PARAM,			&_data.check_period	},
 	{ 0, 0, 0 }
 };
 
@@ -172,7 +173,6 @@ rpc_export_t ul_rpc[] =
     {"cnxcc.active_clients",	rpc_active_clients,	rpc_active_clients_doc,	0},
     {"cnxcc.check_client",		rpc_check_client_stats,	rpc_check_client_stats_doc,	0},
     {"cnxcc.kill_call",			rpc_kill_call,	rpc_kill_call_doc,	0},
-
     {0, 0, 0, 0}
 };
 
@@ -230,6 +230,12 @@ static int mod_init(void)
 		_data.cs_route_number	= -1;
 	}
 
+	if (_data.check_period <= 0)
+	{
+		LM_INFO("credit_check_period cannot be less than 1 second");
+		return -1;
+	}
+
 	_data.time.credit_data_by_client	= shm_malloc(sizeof(struct str_hash_table));
 	_data.time.call_data_by_cid 		= shm_malloc(sizeof(struct str_hash_table));
 	_data.money.credit_data_by_client	= shm_malloc(sizeof(struct str_hash_table));
@@ -265,13 +271,13 @@ static int mod_init(void)
 
 	register_mi_cmd(mi_credit_control_stats, "cnxcc_stats", NULL, NULL, 0);
 
-	if (register_timer(check_calls_by_time, NULL, CREDIT_CHECK_TIME) < 0)
+	if (register_timer(check_calls_by_time, NULL, _data.check_period) < 0)
 	{
 		LM_ERR("Failed to register timer");
 		return -1;
 	}
 
-	if (register_timer(check_calls_by_money, NULL, CREDIT_CHECK_TIME) < 0)
+	if (register_timer(check_calls_by_money, NULL, _data.check_period) < 0)
 	{
 		LM_ERR("Failed to register timer");
 		return -1;

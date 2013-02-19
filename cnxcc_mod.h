@@ -81,6 +81,8 @@ typedef struct data
 	 */
 	flag_t ctrl_flag;
 
+	int check_period;
+
 } data_t;
 
 typedef struct sip_data
