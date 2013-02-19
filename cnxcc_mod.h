@@ -25,9 +25,9 @@
 #define _CNXCC_MOD_H
 
 // 3,778
-#include <kamailio/locking.h>
-#include <kamailio/str_hash.h>
-#include <kamailio/parser/parse_rr.h>
+#include "../../locking.h"
+#include "../../str_hash.h"
+#include "../../parser/parse_rr.h"
 
 #define str_shm_free_if_not_null(_var_) if (_var_.s != NULL)  { shm_free(_var_.s); _var_.s = NULL; _var_.len = 0; }
 
