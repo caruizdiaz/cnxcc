@@ -82,6 +82,9 @@ typedef struct data
 	flag_t ctrl_flag;
 
 	int check_period;
+	int number_of_timers;
+
+	int *timer_count;
 
 } data_t;
 

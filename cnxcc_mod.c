@@ -42,7 +42,8 @@
 #include "../../locking.h"
 #include "../../lock_ops.h"
 #include "../../str_hash.h"
-#include "../../timer.h"
+//#include "../../timer.h"
+#include "../../timer_proc.h"
 #include "../../modules/tm/tm_load.h"
 #include "../../parser/parse_from.h"
 #include "../../parser/parse_to.h"
@@ -68,9 +69,8 @@
 
 MODULE_VERSION
 
-#define HT_SIZE						69
+#define HT_SIZE						229
 #define MODULE_NAME					"CNXCC"
-//#define CREDIT_CHECK_TIME			5
 
 #define TRUE						1
 #define FALSE						0
@@ -78,13 +78,13 @@ MODULE_VERSION
 data_t _data;
 struct dlg_binds _dlgbinds;
 
-
 static int fixup_par(void** param, int param_no);
 
 /*
  *  module core functions
  */
 static int mod_init(void);
+static int child_init(int);
 static int init_hashtable(struct str_hash_table *ht);
 
 /*
@@ -116,7 +116,6 @@ static void notify_call_termination(str *callid, str *from_tag, str *to_tag);
 static void free_call(call_t *call);
 static int has_to_tag(struct sip_msg *msg);
 
-
 /*
  * MI interface
  */
@@ -147,6 +146,7 @@ static param_export_t params[] =
 {
 	{"dlg_flag",  				INT_PARAM,			&_data.ctrl_flag	},
 	{"credit_check_period",  	INT_PARAM,			&_data.check_period	},
+	{"number_of_timers",  		INT_PARAM,			&_data.number_of_timers	},
 	{ 0, 0, 0 }
 };
 
@@ -190,7 +190,7 @@ struct module_exports exports =
 	mod_init,   		/* module initialization function */
 	0,
 	0,
-	0		            /* per-child init function */
+	child_init          /* per-child init function */
 };
 
 static int fixup_par(void** param, int param_no)
@@ -236,10 +236,19 @@ static int mod_init(void)
 		return -1;
 	}
 
+	if (_data.number_of_timers <= 0)
+	{
+		LM_INFO("number_of_timers cannot be less than 1");
+		return -1;
+	}
+
 	_data.time.credit_data_by_client	= shm_malloc(sizeof(struct str_hash_table));
 	_data.time.call_data_by_cid 		= shm_malloc(sizeof(struct str_hash_table));
 	_data.money.credit_data_by_client	= shm_malloc(sizeof(struct str_hash_table));
 	_data.money.call_data_by_cid 		= shm_malloc(sizeof(struct str_hash_table));
+
+	_data.timer_count					= shm_malloc(sizeof(int));
+	*_data.timer_count					= 0;
 
 	_data.stats							= (stats_t *) shm_malloc(sizeof(stats_t));
 
@@ -271,17 +280,27 @@ static int mod_init(void)
 
 	register_mi_cmd(mi_credit_control_stats, "cnxcc_stats", NULL, NULL, 0);
 
-	if (register_timer(check_calls_by_time, NULL, _data.check_period) < 0)
+	if (_data.number_of_timers % 2 != 0)
 	{
-		LM_ERR("Failed to register timer");
-		return -1;
+		LM_ALERT("Rounding number_of_timers to even number");
+		_data.number_of_timers++;
+
 	}
 
-	if (register_timer(check_calls_by_money, NULL, _data.check_period) < 0)
+
+/*	if (register_timer(check_calls_by_time, NULL, _data.check_period) < 0)
 	{
 		LM_ERR("Failed to register timer");
 		return -1;
-	}
+	} */
+
+/*	if (register_timer(check_calls_by_money, NULL, _data.check_period) < 0)
+	{
+		LM_ERR("Failed to register timer");
+		return -1;
+	} */
+
+	register_dummy_timers(_data.number_of_timers /* half for time based, the other half for money based */);
 
 	if (rpc_register_array(ul_rpc) != 0)
 	{
@@ -297,6 +316,43 @@ static int mod_init(void)
 
 	_dlgbinds.register_dlgcb(NULL, DLGCB_CREATED, dialog_created_callback, NULL, NULL);
 
+	return 0;
+}
+
+static int child_init(int rank)
+{
+	if (rank != PROC_MAIN)
+		return 0;
+
+	int timer_count = 0;
+
+	while(timer_count++ < _data.number_of_timers)
+	{
+
+		if (timer_count % 2 == 0)
+		{
+			if(fork_dummy_timer(PROC_TIMER, "CNXCC TB TIMER", 1,
+									check_calls_by_money, NULL, _data.check_period) < 0)
+			{
+									LM_ERR("failed to register TB TIMER routine as process\n");
+									return -1;
+			}
+		}
+		else
+			if(fork_dummy_timer(PROC_TIMER, "CNXCC MB TIMER", 1,
+									check_calls_by_time, NULL, _data.check_period) < 0)
+			{
+									LM_ERR("failed to register MB TIMER routine as process\n");
+									return -1;
+			}
+
+	}
+
+
+	/*timer_function *func = (++(*_data.timer_count) <= (_data.number_of_timers / 2)) ? check_calls_by_money : check_calls_by_time;
+
+	LM_ALERT("timer: %d", *_data.timer_count);
+*/
 	return 0;
 }
 
