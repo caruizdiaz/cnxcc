@@ -247,9 +247,6 @@ static int mod_init(void)
 	_data.money.credit_data_by_client	= shm_malloc(sizeof(struct str_hash_table));
 	_data.money.call_data_by_cid 		= shm_malloc(sizeof(struct str_hash_table));
 
-	_data.timer_count					= shm_malloc(sizeof(int));
-	*_data.timer_count					= 0;
-
 	_data.stats							= (stats_t *) shm_malloc(sizeof(stats_t));
 
 	if (!_data.stats)
@@ -286,19 +283,6 @@ static int mod_init(void)
 		_data.number_of_timers++;
 
 	}
-
-
-/*	if (register_timer(check_calls_by_time, NULL, _data.check_period) < 0)
-	{
-		LM_ERR("Failed to register timer");
-		return -1;
-	} */
-
-/*	if (register_timer(check_calls_by_money, NULL, _data.check_period) < 0)
-	{
-		LM_ERR("Failed to register timer");
-		return -1;
-	} */
 
 	register_dummy_timers(_data.number_of_timers /* half for time based, the other half for money based */);
 
