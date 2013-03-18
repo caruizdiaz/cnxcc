@@ -52,7 +52,6 @@
 #include "../../parser/contact/parse_contact.h"
 #include "../../parser/contact/contact.h"
 #include "../../parser/parse_rr.h"
-#include "../../lib/kcore/parser_helpers.h"
 #include "../../mod_fix.h"
 #include "../dialog/dlg_load.h"
 #include "../dialog/dlg_hash.h"
