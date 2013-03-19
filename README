@@ -65,7 +65,7 @@ Chapter 1. Admin Guide
         
 1. Overview
    
-   This module was designed to act as a mechanism to limit call duration based on credit information paramenters.
+   This module was designed to act as a mechanism to limit call duration based on credit information parameters.
    After getting the credit information of the call being set up, you can instruct the module to start monitoring 
    the consumed credit to shutdown a single call or a group of calls in case of credit exhaustion.
 
@@ -74,6 +74,14 @@ Chapter 1. Admin Guide
 
    Cnxcc is dialog-aware so there's no need to explicitly allocate/deallocate the monitoring. Only a single function 
    call inside the script is needed upon reception of the INVITE.
+
+   The credit discount rate is proportional to the number of calls grouped inside an identifier. Once the setup
+   of the first call is done, the information remains while the call is active. If the customer starts a new call with
+   the same routing criteria, it will land in the same monitoring bag and it will consume the same pool of credit in
+   rates that are equal to the cost per second of both calls.
+
+   If your accounting program does not maintain the state of the call in real time, this module can provide you
+   with that ability.
 
 2. Dependencies
 
@@ -114,8 +122,18 @@ Chapter 1. Admin Guide
    modparam("cnxcc", "number_of_timers", 4)
    ...
 
+4. Functions
 
+4.1. cnxcc_set_max_time()
 
+  Specifies a specific amount of time the call should last at most.
+
+  Example:
+  ...
+  $var(customer) = "john-doe-123-premium";
+  $var(max_time) = 120;
+  cnxcc_set_max_time("$var(customer)", "$var(max_time)");
+  ...
 
    To use the module, run kamailio with the supplied configuration file, register two
    softphones that will call each other and watch the log files to see how the calls are
