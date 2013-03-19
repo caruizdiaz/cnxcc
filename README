@@ -81,7 +81,7 @@ Chapter 1. Admin Guide
    rates that are equal to the cost per second of both calls.
 
    If your accounting program does not maintain the state of the call in real time, this module can provide you
-   with that ability.
+   that ability.
 
 2. Dependencies
 
@@ -126,20 +126,69 @@ Chapter 1. Admin Guide
 
 4.1. cnxcc_set_max_time()
 
-  Specifies a specific amount of time the call should last at most.
+  Specifies the amount of time the call should last at most.
+
+  Example:
+  ...
+  $var(customer) = "john-doe-123-basic";
+  $var(max_time) = 120;
+
+  cnxcc_set_max_time("$var(customer)", "$var(max_time)");
+  ...
+
+4.2. cnxcc_set_max_credit()
+  
+  Specifies the initial pulse, final pulse, max credit and cost per second of a call. The discount
+  is calculated in pulses (30/6, 1/1, etc) and substraced from the pool of credit.
 
   Example:
   ...
   $var(customer) = "john-doe-123-premium";
-  $var(max_time) = 120;
-  cnxcc_set_max_time("$var(customer)", "$var(max_time)");
+  $var(credit) = "100";
+  $var(cps)   = "2.00";
+  $var(initial_p)   = "030";
+  $var(final_p)   = "006";
+
+  cnxcc_set_max_credit("$var(customer)", "$var(credit)", "$var(cps)", "$var(initial_p)", "$var(final_p)");
   ...
 
-   To use the module, run kamailio with the supplied configuration file, register two
-   softphones that will call each other and watch the log files to see how the calls are
-   automatically shutdown when the credit is exhausted.
+5. Exported RPC Commands
 
-   Example:
+5.1. cnxcc.active_clients
+
+  Retrieves all calls grouped by their identifiers. 
+
+  Parameters: none
+
+  Example:
+
+  ...
+  sercmd cnxcc.active_clients
+  ...
+  
+5.2. cnxcc.check_client
+
+  Retrives all calls from a particular identifier.
+
+  Parameters: client/customer identifier
+
+  Example:
+
+  ...
+  sercmd cnxcc.check_client john-doe-123-premium
+  ...
+
+5.3. cnxcc.kill_call
+  
+  Kills an active call using its call ID.
+
+  Parameters: call ID.
+
+  Example:
+
+  ...
+  sercmd cnxcc.kill_call qumojlaahitafih@carlosrdcnx-laptop.site
+  ...
 
    route[CNXCC]
    {
