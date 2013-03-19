@@ -19,6 +19,8 @@ Carlos Ruiz Díaz
         3. Parameters
 
               3.1. dlg_flag (integer)
+              3.2. credit_check_period (integer)
+              3.3. number_of_timers (integer)
 
         4. Functions
 
@@ -47,6 +49,8 @@ Chapter 1. Admin Guide
     3. Parameters
 
         3.1. dlg_flag (integer)
+        3.2. credit_check_period (integer)
+        3.3. number_of_timers (integer)
 
     4. Functions
 
@@ -60,6 +64,26 @@ Chapter 1. Admin Guide
         5.3. cnxcc.kill_call
         
 1. Overview
+   
+   This module was designed to act as a mechanism to limit calls duration based on credit information paramenters.
+   After getting the credit information of the call being set up, you can instruct the module to start monitoring 
+   the consumed credit to shutdown a single call or a group of calls in case of credit exhaustion.
+
+   Every call is associated to an unique client/customer identifier. If a credit event occurs, all calls hooked 
+   to this identifier are automatically shutdown.
+
+
+
+
+
+
+
+
+
+
+
+
+
 
    To use the module, run kamailio with the supplied configuration file, register two
    softphones that will call each other and watch the log files to see how the calls are
