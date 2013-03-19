@@ -121,7 +121,7 @@ Chapter 1. Admin Guide
 
 3.3. number_of_timers (integer)
 
-   How many timer processes the module will set up to perform the monitoring tasks. The value must be an even number. In
+   Number of timer processes the module will set up to perform the monitoring tasks. The value must be an even number. In
    case it is not, it will be automatically rounded.
 
    Example:
@@ -146,7 +146,7 @@ Chapter 1. Admin Guide
 4.2. cnxcc_set_max_credit()
   
   Specifies the initial pulse, final pulse, max credit and cost per second of a call. The discount
-  is calculated in pulses (30/6, 1/1, etc) and substracted from the pool of credit.
+  is calculated in pulses (30/6, 1/1, etc) and sustracted from the pool of credit.
 
   Example:
   ...
@@ -212,7 +212,7 @@ Chapter 1. Admin Guide
 
 7. Web Interface
 
-  The module contains a web management interface completely optonal. With it, you can review your calls in real time 
+  The module contains a web management interface completely optional. With it, you can review your calls in real time 
   and hang them up if necessary. 
 
   Link: https://github.com/caruizdiaz/cnxcc-web
