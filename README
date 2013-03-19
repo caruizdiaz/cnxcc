@@ -31,11 +31,13 @@ Carlos Ruiz Díaz
 
               5.1. cnxcc.active_clients
               5.2. cnxcc.check_client
-              5.3. cnxcc.kill_call              
+              5.3. cnxcc.kill_call          
 
-   List of Examples
-   
-   1.1 
+        6. Events
+
+        7. Web Interface
+
+        8. Examples  
    
 Chapter 1. Admin Guide
 
@@ -62,6 +64,11 @@ Chapter 1. Admin Guide
         5.1. cnxcc.active_clients
         5.2. cnxcc.check_client
         5.3. cnxcc.kill_call
+
+    6. Events
+
+    7. Web Interface
+    
         
 1. Overview
    
@@ -139,7 +146,7 @@ Chapter 1. Admin Guide
 4.2. cnxcc_set_max_credit()
   
   Specifies the initial pulse, final pulse, max credit and cost per second of a call. The discount
-  is calculated in pulses (30/6, 1/1, etc) and substraced from the pool of credit.
+  is calculated in pulses (30/6, 1/1, etc) and substracted from the pool of credit.
 
   Example:
   ...
@@ -161,7 +168,6 @@ Chapter 1. Admin Guide
   Parameters: none
 
   Example:
-
   ...
   sercmd cnxcc.active_clients
   ...
@@ -173,7 +179,6 @@ Chapter 1. Admin Guide
   Parameters: client/customer identifier
 
   Example:
-
   ...
   sercmd cnxcc.check_client john-doe-123-premium
   ...
@@ -185,10 +190,34 @@ Chapter 1. Admin Guide
   Parameters: call ID.
 
   Example:
-
   ...
   sercmd cnxcc.kill_call qumojlaahitafih@carlosrdcnx-laptop.site
   ...
+
+6. Events
+  
+  When a call is forced to end an event route is automatically invoked. This route is suited with a fake OPTIONS 
+  message containing the call ID, ftag and ttag of the original call so it can be located somehow in the accounting
+  database.
+
+  Example:
+  ...
+  event_route[cnxcc:call-shutdown]
+  {
+        xlog("L_INFO", "[$ci]: call killed");
+
+	# perform some kind of notification, database update, email sending, etc
+  }
+  ...
+
+7. Web Interface
+
+  The module contains a web management interface completely optonal. With it, you can review your calls in real time 
+  and hang them up if necessary. 
+
+  Link: https://github.com/caruizdiaz/cnxcc-web
+
+8. Examples
 
    route[CNXCC]
    {
@@ -204,13 +233,12 @@ Chapter 1. Admin Guide
       			  "$var(i_pulse)", 
       			  "$var(f_pulse)")) {
    	   xlog("Error setting up credit control");
-	   }
+      }
    }
 
-   This module has also a web interface which makes the visualization nicer. 
-   Give it a try: https://github.com/caruizdiaz/cnxcc-web
+  event_route[cnxcc:call-shutdown]
+  {
+        xlog("L_INFO", "[$ci]: call killed");
 
-   *** I tested this module under Kamailio 3.2.4 ***
-   
-   ... documentation incomplete ...
-   
+        
+  }
