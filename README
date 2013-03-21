@@ -140,7 +140,7 @@ Chapter 1. Admin Guide
   $var(customer) = "john-doe-123-basic";
   $var(max_time) = 120;
 
-  cnxcc_set_max_time("$var(customer)", "$var(max_time)");
+  cnxcc_set_max_tim ("$var(customer)", "$var(max_time)");
   ...
 
 4.2. cnxcc_set_max_credit()
@@ -152,9 +152,9 @@ Chapter 1. Admin Guide
   ...
   $var(customer) = "john-doe-123-premium";
   $var(credit) = "100";
-  $var(cps)   = "2.00";
-  $var(initial_p)   = "030";
-  $var(final_p)   = "006";
+  $var(cps)   = "2.00";		# cost per second
+  $var(initial_p)   = "030";	# intial pulse
+  $var(final_p)   = "006";	# final pulse
 
   cnxcc_set_max_credit("$var(customer)", "$var(credit)", "$var(cps)", "$var(initial_p)", "$var(final_p)");
   ...
