@@ -106,6 +106,7 @@ modparam("cnxcc", "number_of_timers", 4)
 		</programlisting>
             </example>
         </section>
+    </section>
 
     <section>
 	<title>Functions</title>
@@ -183,7 +184,7 @@ cnxcc_set_max_tim ("$var(customer)", "$var(max_time)");
             </example>
         </section>
     </section>
-
+    
     <section>
 	<title>Exported RPC Commands</title>
 
@@ -234,6 +235,7 @@ cnxcc_set_max_tim ("$var(customer)", "$var(max_time)");
             &sercmd; cnxcc.kill_call qumojlaahitafih@carlosrdcnx-laptop.site
             </programlisting>
         </section>
+    </section>
 
     <section>
 	    <title>Events</title>
@@ -273,7 +275,6 @@ event_route[cnxcc:call-shutdown]
     <section>
 	<title>Sample</title>
 	<example>
-	    <title>&kamailioconfig;</title>
 	    <programlisting format="linespecific">
 ...
 route[CNXCC]
