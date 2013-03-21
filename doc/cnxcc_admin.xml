@@ -222,7 +222,7 @@ cnxcc_set_max_tim ("$var(customer)", "$var(max_time)");
                 Example:
             </para>
             <programlisting format="linespecific">
-		    &sercmd; cnxcc.check_client john-doe-123-premium
+	    &sercmd; cnxcc.check_client john-doe-123-premium
             </programlisting>
         </section>
 
