@@ -40,12 +40,12 @@ Carlos Ruiz Diaz
 
    List of Examples
 
-   1.1.
-   1.2.
-   1.3.
-   1.4.
-   1.5.
-   1.6.
+   1.1. dlg_flag
+   1.2. credit_check_period
+   1.3. number_of_timers
+   1.4. cnxcc_set_max_credit()
+   1.5. cnxcc_set_max_time()
+   1.6. kamailio-cnxcc.cfg
 
 Chapter 1. Admin Guide
 
@@ -123,7 +123,7 @@ Chapter 1. Admin Guide
    Flag to indicate if the dialog must be monitored or not. Messages are
    flagged with this value if we call one of the monitoring functions.
 
-   Example 1.1.
+   Example 1.1. dlg_flag
 ...
 modparam("cnxcc", "dlg_flag", 29)
 ...
@@ -137,7 +137,7 @@ modparam("cnxcc", "dlg_flag", 29)
 
    Values greater than 1 leads to precision lost but less CPU consumption.
 
-   Example 1.2.
+   Example 1.2. credit_check_period
 ...
 modparam("cnxcc", "credit_check_period", 1)
 ...
@@ -148,7 +148,7 @@ modparam("cnxcc", "credit_check_period", 1)
    monitoring tasks. The value must be an even number. In case it is not,
    it will be automatically rounded.
 
-   Example 1.3.
+   Example 1.3. number_of_timers
 ...
 modparam("cnxcc", "number_of_timers", 4)
 ...
@@ -168,7 +168,7 @@ modparam("cnxcc", "number_of_timers", 4)
      * 1 - successful
      * -1 - failed, error logged
 
-   Example 1.4.
+   Example 1.4. cnxcc_set_max_credit()
 ...
 $var(customer) = "john-doe-123-premium";
 $var(credit) = "100";
@@ -188,7 +188,7 @@ l_p)", "$var(final_p)");
      * 1 - successful
      * -1 - failed, error logged
 
-   Example 1.5.
+   Example 1.5. cnxcc_set_max_time()
 ...
 $var(customer) = "john-doe-123-basic";
 $var(max_time) = 120;
@@ -257,7 +257,7 @@ event_route[cnxcc:call-shutdown]
 
 8. Sample
 
-   Example 1.6.
+   Example 1.6. kamailio-cnxcc.cfg
 ...
 route[CNXCC]
 {
