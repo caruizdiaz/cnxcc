@@ -65,6 +65,8 @@
 		the monitoring functions.
 	    </para>
 	    <example>
+
+		<title>dlg_flag</title>
 		<programlisting format="linespecific">
 ...
 modparam("cnxcc", "dlg_flag", 29)
@@ -84,6 +86,7 @@ modparam("cnxcc", "dlg_flag", 29)
 		Values greater than 1 leads to precision lost but less CPU consumption.
 	    </para>
 	    <example>
+		<title>credit_check_period</title>
 		<programlisting format="linespecific">
 ...
 modparam("cnxcc", "credit_check_period", 1)
@@ -99,6 +102,7 @@ modparam("cnxcc", "credit_check_period", 1)
 		case it is not, it will be automatically rounded.
 	    </para>
             <example>
+		<title>number_of_timers</title>
                 <programlisting format="linespecific">
 ...
 modparam("cnxcc", "number_of_timers", 4)
@@ -135,6 +139,7 @@ modparam("cnxcc", "number_of_timers", 4)
 		</itemizedlist>
 	    </para>
 	    <example>
+		<title>cnxcc_set_max_credit()</title>
 		<programlisting format="linespecific">
 ...
 $var(customer) = "john-doe-123-premium";
@@ -173,6 +178,7 @@ cnxcc_set_max_credit("$var(customer)", "$var(credit)", "$var(cps)", "$var(initia
                 </itemizedlist>
             </para>
             <example>
+		<title>cnxcc_set_max_time()</title>
                 <programlisting format="linespecific">
 ...
 $var(customer) = "john-doe-123-basic";
@@ -275,6 +281,7 @@ event_route[cnxcc:call-shutdown]
     <section>
 	<title>Sample</title>
 	<example>
+	    <title>kamailio-cnxcc.cfg</title>
 	    <programlisting format="linespecific">
 ...
 route[CNXCC]
