@@ -52,6 +52,7 @@
 #include "../../parser/contact/parse_contact.h"
 #include "../../parser/contact/contact.h"
 #include "../../parser/parse_rr.h"
+//#include "../../lib/kcore/parser_helpers.h"
 #include "../../mod_fix.h"
 #include "../dialog/dlg_load.h"
 #include "../dialog/dlg_hash.h"
@@ -70,6 +71,7 @@ MODULE_VERSION
 
 #define HT_SIZE						229
 #define MODULE_NAME					"CNXCC"
+#define NUMBER_OF_TIMERS			2
 
 #define TRUE						1
 #define FALSE						0
@@ -145,7 +147,6 @@ static param_export_t params[] =
 {
 	{"dlg_flag",  				INT_PARAM,			&_data.ctrl_flag	},
 	{"credit_check_period",  	INT_PARAM,			&_data.check_period	},
-	{"number_of_timers",  		INT_PARAM,			&_data.number_of_timers	},
 	{ 0, 0, 0 }
 };
 
@@ -235,12 +236,6 @@ static int mod_init(void)
 		return -1;
 	}
 
-	if (_data.number_of_timers <= 0)
-	{
-		LM_INFO("number_of_timers cannot be less than 1");
-		return -1;
-	}
-
 	_data.time.credit_data_by_client	= shm_malloc(sizeof(struct str_hash_table));
 	_data.time.call_data_by_cid 		= shm_malloc(sizeof(struct str_hash_table));
 	_data.money.credit_data_by_client	= shm_malloc(sizeof(struct str_hash_table));
@@ -276,14 +271,11 @@ static int mod_init(void)
 
 	register_mi_cmd(mi_credit_control_stats, "cnxcc_stats", NULL, NULL, 0);
 
-	if (_data.number_of_timers % 2 != 0)
-	{
-		LM_ALERT("Rounding number_of_timers to even number");
-		_data.number_of_timers++;
-
-	}
-
-	register_dummy_timers(_data.number_of_timers /* half for time based, the other half for money based */);
+	/*
+	 * One for time based monitoring
+	 * One for money based monitoring
+	 */
+	register_dummy_timers(NUMBER_OF_TIMERS);
 
 	if (rpc_register_array(ul_rpc) != 0)
 	{
@@ -307,35 +299,21 @@ static int child_init(int rank)
 	if (rank != PROC_MAIN)
 		return 0;
 
-	int timer_count = 0;
 
-	while(timer_count++ < _data.number_of_timers)
+	if(fork_dummy_timer(PROC_TIMER, "CNXCC TB TIMER", 1,
+			check_calls_by_money, NULL, _data.check_period) < 0)
 	{
-
-		if (timer_count % 2 == 0)
-		{
-			if(fork_dummy_timer(PROC_TIMER, "CNXCC TB TIMER", 1,
-									check_calls_by_money, NULL, _data.check_period) < 0)
-			{
-									LM_ERR("failed to register TB TIMER routine as process\n");
-									return -1;
-			}
-		}
-		else
-			if(fork_dummy_timer(PROC_TIMER, "CNXCC MB TIMER", 1,
-									check_calls_by_time, NULL, _data.check_period) < 0)
-			{
-									LM_ERR("failed to register MB TIMER routine as process\n");
-									return -1;
-			}
-
+		LM_ERR("failed to register TB TIMER routine as process\n");
+		return -1;
 	}
 
+	if(fork_dummy_timer(PROC_TIMER, "CNXCC MB TIMER", 1,
+								check_calls_by_time, NULL, _data.check_period) < 0)
+	{
+		LM_ERR("failed to register MB TIMER routine as process\n");
+		return -1;
+	}
 
-	/*timer_function *func = (++(*_data.timer_count) <= (_data.number_of_timers / 2)) ? check_calls_by_money : check_calls_by_time;
-
-	LM_ALERT("timer: %d", *_data.timer_count);
-*/
 	return 0;
 }
 
