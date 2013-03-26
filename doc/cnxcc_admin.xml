@@ -93,7 +93,8 @@ modparam("cnxcc", "credit_check_period", 1)
 ...		
 		</programlisting>
 	    </example>
-	</section>
+	</section> 
+   </section>
 
     <section>
 	<title>Functions</title>
