@@ -21,7 +21,6 @@ Carlos Ruiz Diaz
 
               3.1. dlg_flag (integer)
               3.2. credit_check_period (integer)
-              3.3. number_of_timers (integer)
 
         4. Functions
 
@@ -42,10 +41,9 @@ Carlos Ruiz Diaz
 
    1.1. dlg_flag
    1.2. credit_check_period
-   1.3. number_of_timers
-   1.4. cnxcc_set_max_credit()
-   1.5. cnxcc_set_max_time()
-   1.6. kamailio-cnxcc.cfg
+   1.3. cnxcc_set_max_credit()
+   1.4. cnxcc_set_max_time()
+   1.5. kamailio-cnxcc.cfg
 
 Chapter 1. Admin Guide
 
@@ -60,7 +58,6 @@ Chapter 1. Admin Guide
 
         3.1. dlg_flag (integer)
         3.2. credit_check_period (integer)
-        3.3. number_of_timers (integer)
 
    4. Functions
 
@@ -116,7 +113,6 @@ Chapter 1. Admin Guide
 
    3.1. dlg_flag (integer)
    3.2. credit_check_period (integer)
-   3.3. number_of_timers (integer)
 
 3.1.  dlg_flag (integer)
 
@@ -142,17 +138,6 @@ modparam("cnxcc", "dlg_flag", 29)
 modparam("cnxcc", "credit_check_period", 1)
 ...
 
-3.3. number_of_timers (integer)
-
-   Number of timer processes the module will set up to perform the
-   monitoring tasks. The value must be an even number. In case it is not,
-   it will be automatically rounded.
-
-   Example 1.3. number_of_timers
-...
-modparam("cnxcc", "number_of_timers", 4)
-...
-
 4. Functions
 
    4.1. cnxcc_set_max_credit()
@@ -168,7 +153,7 @@ modparam("cnxcc", "number_of_timers", 4)
      * 1 - successful
      * -1 - failed, error logged
 
-   Example 1.4. cnxcc_set_max_credit()
+   Example 1.3. cnxcc_set_max_credit()
 ...
 $var(customer) = "john-doe-123-premium";
 $var(credit) = "100";
@@ -188,7 +173,7 @@ l_p)", "$var(final_p)");
      * 1 - successful
      * -1 - failed, error logged
 
-   Example 1.5. cnxcc_set_max_time()
+   Example 1.4. cnxcc_set_max_time()
 ...
 $var(customer) = "john-doe-123-basic";
 $var(max_time) = 120;
@@ -209,7 +194,7 @@ cnxcc_set_max_tim ("$var(customer)", "$var(max_time)");
    Parameters: none
 
    Example:
-            kamcmd cnxcc.active_clients
+            sercmd cnxcc.active_clients
 
 5.2. cnxcc.check_client
 
@@ -218,7 +203,7 @@ cnxcc_set_max_tim ("$var(customer)", "$var(max_time)");
    Parameters: client/customer identifier
 
    Example:
-                    kamcmd cnxcc.check_client john-doe-123-premium
+            sercmd cnxcc.check_client john-doe-123-premium
 
 5.3. cnxcc.kill_call
 
@@ -227,7 +212,7 @@ cnxcc_set_max_tim ("$var(customer)", "$var(max_time)");
    Parameters: Call-ID
 
    Example:
-            kamcmd cnxcc.kill_call qumojlaahitafih@carlosrdcnx-laptop.site
+            sercmd cnxcc.kill_call qumojlaahitafih@carlosrdcnx-laptop.site
 
 6. Events
 
@@ -257,7 +242,7 @@ event_route[cnxcc:call-shutdown]
 
 8. Sample
 
-   Example 1.6. kamailio-cnxcc.cfg
+   Example 1.5. kamailio-cnxcc.cfg
 ...
 route[CNXCC]
 {
