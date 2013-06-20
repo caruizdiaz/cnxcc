@@ -107,6 +107,7 @@ static int set_max_time(struct sip_msg* msg, char* number, char* str2);
 static int set_max_credit(struct sip_msg* msg, char *str_pv_client, char *str_pv_credit, char *str_pv_cps, char *str_pv_inip, char *str_pv_finp);
 static int set_max_channels(struct sip_msg* msg, char* str_pv_client, char* str_pv_max_chan);
 static int get_channel_count(struct sip_msg* msg, char* str_pv_client, char* str_pv_max_chan);
+static int terminate_all(struct sip_msg* msg, char* str_pv_client);
 
 static void start_billing(str *callid, str tags[2]);
 static void setup_billing(str *callid, unsigned int h_entry, unsigned int h_id);
@@ -144,6 +145,7 @@ static cmd_export_t cmds[] =
 	{"cnxcc_set_max_credit",   (cmd_function) set_max_credit, 5, fixup_par, NULL, ANY_ROUTE},
 	{"cnxcc_set_max_channels",   (cmd_function) set_max_channels, 2, fixup_pvar_pvar, NULL, ANY_ROUTE},
 	{"cnxcc_get_channel_count",   (cmd_function) get_channel_count, 2, fixup_pvar_pvar, NULL, ANY_ROUTE},
+	{"cnxcc_terminate_all",   (cmd_function) terminate_all, 1, fixup_pvar_null, NULL, ANY_ROUTE},
 
 	{0,0,0,0,0,0}
 };
@@ -1500,6 +1502,37 @@ static int set_max_credit(struct sip_msg* msg,
 
 	return 1;
 }
+
+static int terminate_all(struct sip_msg* msg, char* str_pv_client)
+{
+	credit_data_t *credit_data 	= NULL;
+	pv_spec_t *client_id_spec	= (pv_spec_t *) str_pv_client;
+
+	pv_value_t client_id_val;
+
+	if (pv_get_spec_value(msg, client_id_spec, &client_id_val) != 0)
+	{
+		LM_ERR("[%.*s]: can't get client_id pvar value\n", msg->callid->body.len, msg->callid->body.s);
+		return -1;
+	}
+
+	if (client_id_val.rs.len == 0 || client_id_val.rs.s == NULL)
+	{
+		LM_ERR("[%.*s]: client ID cannot be null\n", msg->callid->body.len, msg->callid->body.s);
+		return -1;
+	}
+
+	if (try_get_credit_data_entry(&client_id_val.rs, &credit_data) != 0)
+	{
+		LM_DBG("[%.*s] not found\n", msg->callid->body.len, msg->callid->body.s);
+		return -1;
+	}
+
+	terminate_all_calls(credit_data);
+
+	return 1;
+}
+
 static int get_channel_count(struct sip_msg* msg, char* str_pv_client, char* str_pv_chan_count)
 {
 	credit_data_t *credit_data 	= NULL;
